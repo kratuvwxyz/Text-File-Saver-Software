@@ -1,0 +1,23 @@
+{
+  "appId": "com.example.myapp",
+  "productName": "My App",
+  "directories": {
+    "output": "dist"
+  },
+  "files": ["**/*"],
+  "mac": {
+    "category": "your.app.category.type"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64", "ia32"]
+      }
+    ]
+  },
+  "linux": {
+    "target": ["AppImage", "deb", "rpm"],
+    "category": "your.app.category.type"
+  }
+}

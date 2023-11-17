@@ -5,6 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +21,10 @@
   },
   "homepage": "https://github.com/kratuvwxyz/Text-File-Saver-Software#readme",
   "dependencies": {
-    "electron": "^27.1.0",
     "nodemon": "^3.0.1"
+  },
+  "devDependencies": {
+    "electron": "^27.1.0",
+    "electron-builder": "^24.6.4"
   }
 }
