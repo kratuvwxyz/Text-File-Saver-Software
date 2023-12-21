@@ -21,13 +21,13 @@ function submitForm() {
 function loadTableData() {
     // Use ipcRenderer from the global context
     window.ipcRenderer.send('request-table-data');
-    
-    ipcRenderer.send('request-table-data');
 
-    ipcRenderer.on('table-data', (event, tableData) => {
+    // Handle the response with the table data
+    window.ipcRenderer.on('table-data', (event, tableData) => {
         const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = '';
+        tableBody.innerHTML = ''; // Clear existing rows
 
+        // Append new rows to the table
         tableData.forEach((rowData) => {
             const row = document.createElement('tr');
             Object.values(rowData).forEach((value) => {

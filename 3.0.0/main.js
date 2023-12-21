@@ -9,9 +9,9 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            nodeIntegration: false, // Set to false to enable context isolation
+            nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js'), // Specify the preload script
+            preload: path.join(__dirname, 'preload.js'),
         },
     });
 
@@ -34,13 +34,37 @@ app.on('activate', function () {
 
 ipcMain.on('submit-form', (event, formData) => {
     const dataPath = path.join(app.getPath('userData'), 'data.json');
-    const jsonData = JSON.stringify(formData, null, 2);
 
-    fs.writeFile(dataPath, jsonData, (err) => {
-        if (err) throw err;
-        console.log('Data saved to', dataPath);
+    fs.readFile(dataPath, 'utf-8', (err, data) => {
+        let jsonData;
 
-        mainWindow.webContents.send('request-table-data');
+        if (err) {
+            // If file doesn't exist, initialize jsonData as an empty array
+            jsonData = [];
+        } else {
+            try {
+                // Parse existing data as JSON
+                jsonData = JSON.parse(data);
+                if (!Array.isArray(jsonData)) {
+                    // If not an array, initialize as an empty array
+                    jsonData = [];
+                }
+            } catch (parseError) {
+                console.error('Error parsing data.json:', parseError);
+                jsonData = [];
+            }
+        }
+
+        // Push new formData to jsonData
+        jsonData.push(formData);
+
+        // Write the updated data back to the file
+        fs.writeFile(dataPath, JSON.stringify(jsonData, null, 2), (err) => {
+            if (err) throw err;
+            console.log('Data saved to', dataPath);
+
+            mainWindow.webContents.send('request-table-data');
+        });
     });
 });
 
@@ -52,8 +76,13 @@ ipcMain.on('request-table-data', (event) => {
             console.error(err);
             event.reply('table-data', []); // Send an empty array if there's an error
         } else {
-            const jsonData = JSON.parse(data);
-            event.reply('table-data', [jsonData]); // Send the data as an array for consistency
+            try {
+                const jsonData = JSON.parse(data);
+                event.reply('table-data', jsonData);
+            } catch (parseError) {
+                console.error('Error parsing data.json:', parseError);
+                event.reply('table-data', []); // Send an empty array on parse error
+            }
         }
     });
 });
