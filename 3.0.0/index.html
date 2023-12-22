@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electron Form App</title>
 </head>
+
 <body>
 
     <form id="myForm">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name"><br>
+        <input type="text" id="name" name="name" required><br>
 
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email"><br>
+        <input type="text" id="email" name="email" required><br>
 
         <label for="age">Age:</label>
-        <input type="number" id="age" name="age"><br>
+        <input type="number" id="age" name="age" required><br>
 
-        <button type="button" onclick="submitForm()">Submit</button>
+        <button type="button" onclick="submitForm(onSubmitComplete)">Submit</button>
     </form>
 
     <hr>
@@ -37,16 +39,24 @@
 
     <!-- Include preload script -->
     <script>
-        const { ipcRenderer } = window;
-
         // Expose ipcRenderer globally
         window.ipcRenderer = ipcRenderer;
     </script>
+
+    <!-- Include Electron script directly in HTML -->
+    <!-- <script>
+        const { ipcRenderer } = require('electron');
+
+        // Expose ipcRenderer globally for renderer.js
+        window.ipcRenderer = ipcRenderer;
+    </script> -->
     <script>
         // Use preload script to expose ipcRenderer globally
         require('fs').readFileSync(require('path').join(__dirname, 'preload.js'), 'utf8');
     </script>
     <script src="renderer.js"></script>
 
+
 </body>
+
 </html>

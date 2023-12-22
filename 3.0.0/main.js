@@ -1,3 +1,4 @@
+const { log } = require('console');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -66,9 +67,12 @@ ipcMain.on('submit-form', (event, formData) => {
             mainWindow.webContents.send('request-table-data');
         });
     });
+
+    mainWindow.loadFile('index.html');
 });
 
 ipcMain.on('request-table-data', (event) => {
+    console.log('Request received');
     const dataPath = path.join(app.getPath('userData'), 'data.json');
 
     fs.readFile(dataPath, 'utf-8', (err, data) => {
@@ -78,6 +82,7 @@ ipcMain.on('request-table-data', (event) => {
         } else {
             try {
                 const jsonData = JSON.parse(data);
+                console.log('Sending table data:', jsonData);
                 event.reply('table-data', jsonData);
             } catch (parseError) {
                 console.error('Error parsing data.json:', parseError);
